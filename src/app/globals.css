@@ -28,7 +28,6 @@ html {
 
 body {
   margin: 0;
-  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-weight: 400;

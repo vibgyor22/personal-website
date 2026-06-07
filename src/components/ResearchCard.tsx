@@ -190,8 +190,8 @@ function DemocracyChart() {
       <text x="632" y="160" fill={C.textDim} fontSize="11" fontFamily="monospace">World Bank + EIU data</text>
       <text x="632" y="176" fill={C.textDim} fontSize="11" fontFamily="monospace">higher dem → lower CO₂</text>
 
-      <line x1="60" y1="278" x2="840" y2="278" stroke={C.grid} strokeWidth="1" />
-      <text x="450" y="296" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">
+      <line x1="60" y1="292" x2="840" y2="292" stroke={C.grid} strokeWidth="1" />
+      <text x="450" y="308" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">
         WORLD BANK CO₂ DATA · EIU DEMOCRACY INDEX · OLS REGRESSION · ALL DIAGNOSTICS CLEAN · 2023
       </text>
     </svg>

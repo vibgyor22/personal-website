@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Newsreader, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { ParticleBackground } from "@/components/ParticleBackground";
 
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -47,6 +48,7 @@ export default function RootLayout({
         <a href="#about" className="skip-link">
           Skip to content
         </a>
+        <ParticleBackground />
         <div className="grain" aria-hidden="true" />
         {children}
       </body>

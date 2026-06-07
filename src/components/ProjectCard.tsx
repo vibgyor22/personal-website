@@ -132,7 +132,7 @@ function AttritionVisual() {
   const fH = 52, fGap = 12, fStart = 42, fBoxW = 340, fX = 48, flowCx = 218;
 
   // bar chart geometry
-  const chartB = 230, maxBarH = 168; // max bar for period=27
+  const chartB = 230, maxBarH = 150; // max bar for period=27
   const scale = maxBarH / 27;
   const barW = 54;
   const barCx = [492, 564, 636, 708, 780]; // bar centers
