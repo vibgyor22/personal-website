@@ -7,17 +7,18 @@ type Dot = {
   vx: number; vy: number
   r: number; a: number
   rgb: string
-  parallax: number
   waveAmp: number; waveFreq: number; wavePhase: number; waveAxis: 0 | 1
 }
 
 const COLORS = ['255,255,255', '232,228,220', '184,168,138', '138,154,130']
 const MOUSE_RADIUS = 150
 const FORCE = 0.28
-const MAX_SPEED = 1.3
+const MAX_SPEED = 2.8
 const DAMPEN = 0.97
 const CONNECT_DIST = 88
 const WAVE_FRAC = 0.18
+const SCROLL_MULT = 0.055
+const SCROLL_DECAY = 0.94
 
 export function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -34,6 +35,7 @@ export function ParticleBackground() {
     const COUNT = isMobile ? 110 : 260
 
     let W = 0, H = 0, mouseX = -9999, mouseY = -9999, raf = 0, frame = 0
+    let lastScrollY = window.scrollY, scrollVY = 0
 
     function resize() {
       W = canvas!.width = window.innerWidth
@@ -50,7 +52,6 @@ export function ParticleBackground() {
       r: Math.random() * 1.5 + 0.4,
       a: Math.random() * 0.18 + 0.12,
       rgb: COLORS[Math.floor(Math.random() * COLORS.length)],
-      parallax: Math.random() * 0.04 + 0.01,
       waveAmp: i < COUNT * WAVE_FRAC ? Math.random() * 28 + 8 : 0,
       waveFreq: Math.random() * 0.008 + 0.002,
       wavePhase: Math.random() * Math.PI * 2,
@@ -59,14 +60,20 @@ export function ParticleBackground() {
 
     function onMove(e: MouseEvent) { mouseX = e.clientX; mouseY = e.clientY }
     function onLeave() { mouseX = -9999; mouseY = -9999 }
+    function onScroll() {
+      const delta = window.scrollY - lastScrollY
+      scrollVY += delta * SCROLL_MULT
+      lastScrollY = window.scrollY
+    }
     window.addEventListener('mousemove', onMove)
     document.addEventListener('mouseleave', onLeave)
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     function tick() {
       ctx!.clearRect(0, 0, W, H)
       frame++
 
-      const scrollY = window.scrollY
+      scrollVY *= SCROLL_DECAY
 
       // connection lines
       for (let i = 0; i < dots.length; i++) {
@@ -87,6 +94,8 @@ export function ParticleBackground() {
       }
 
       for (const d of dots) {
+        d.vy += scrollVY
+
         const dx = d.x - mouseX
         const dy = d.y - mouseY
         const dist = Math.hypot(dx, dy)
@@ -109,12 +118,8 @@ export function ParticleBackground() {
         d.y = (d.y + d.vy + H) % H
 
         const waveOffset = d.waveAmp * Math.sin(frame * d.waveFreq + d.wavePhase)
-        const baseX = d.waveAxis === 0 ? d.x + waveOffset * 0.25 : d.x
-        const baseY = d.waveAxis === 1 ? d.y + waveOffset * 0.25 : d.y
-
-        // parallax: dots shift down proportionally to scroll depth
-        const drawX = baseX
-        const drawY = ((baseY + scrollY * d.parallax) % H + H) % H
+        const drawX = d.waveAxis === 0 ? d.x + waveOffset * 0.25 : d.x
+        const drawY = d.waveAxis === 1 ? d.y + waveOffset * 0.25 : d.y
 
         ctx!.beginPath()
         ctx!.arc(drawX, drawY, d.r, 0, Math.PI * 2)
@@ -130,6 +135,7 @@ export function ParticleBackground() {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('scroll', onScroll)
       document.removeEventListener('mouseleave', onLeave)
     }
   }, [])
