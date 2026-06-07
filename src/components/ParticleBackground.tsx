@@ -17,7 +17,8 @@ const MAX_SPEED = 2.8
 const DAMPEN = 0.97
 const CONNECT_DIST = 88
 const WAVE_FRAC = 0.18
-const SCROLL_MULT = 0.055
+const SCROLL_MULT_DESKTOP = 0.028
+const SCROLL_MULT_MOBILE = 0.012
 const SCROLL_DECAY = 0.94
 
 export function ParticleBackground() {
@@ -33,6 +34,7 @@ export function ParticleBackground() {
 
     const isMobile = window.innerWidth < 768
     const COUNT = isMobile ? 110 : 260
+    const SCROLL_MULT = isMobile ? SCROLL_MULT_MOBILE : SCROLL_MULT_DESKTOP
 
     let W = 0, H = 0, mouseX = -9999, mouseY = -9999, raf = 0, frame = 0
     let lastScrollY = window.scrollY, scrollVY = 0
