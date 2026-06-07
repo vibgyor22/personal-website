@@ -6,175 +6,202 @@ import type { Project } from "@/data/content";
 
 const C = {
   bg: "#0d0c0b", bgDark: "#090908",
-  text: "#8a8580", textDim: "#565250",
+  text: "#bfbab2", textDim: "#7e7a74",
   amber: "#c9a96e", olive: "#8aab80",
-  grid: "#1e1d1b", border: "#2e2b27",
+  grid: "#252320", border: "#3a3630",
 };
 
-// Full-width landscape charts (viewBox 900×320), content in x=80–820 for mobile safety.
-// preserveAspectRatio="xMidYMid meet" fills the container, only far edges cropped on small screens.
-
 function EspressoVisual() {
-  const [hov, setHov] = useState<number | null>(null);
-  const stages = [
-    { label: "load",     sub: "CSV + question" },
-    { label: "profile",  sub: "types · missing · outliers" },
-    { label: "select",   sub: "15+ estimators" },
-    { label: "estimate", sub: "statsmodels · scipy" },
-    { label: "export",   sub: "HTML · LaTeX · JSON" },
-  ];
-  const cx = [130, 258, 386, 514, 642];
+  // 3-panel: Input | Diagnostic chain | Output
+  const panelY = 34, panelH = 232;
+  const lx = 80,  lw = 220;   // left panel x=80–300
+  const dx = 318, dw = 262;   // center panel x=318–580
+  const rx = 598, rw = 218;   // right panel x=598–816
 
   return (
     <svg viewBox="0 0 900 320" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <rect width="900" height="320" fill={C.bg} />
 
-      <text x="450" y="22" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle" letterSpacing="2">
-        HOW ESPRESSO WORKS
+      <text x="450" y="21" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle" letterSpacing="2">
+        ESPRESSO · AUTO MODEL SELECTION
       </text>
 
-      {/* horizontal pipeline */}
-      {stages.map((s, i) => {
-        const x = cx[i], isH = hov === i, isLast = i === stages.length - 1;
-        return (
-          <g key={s.label}>
-            {i > 0 && (
-              <>
-                <line x1={cx[i - 1] + 56} y1="72" x2={x - 56} y2="72" stroke={C.grid} strokeWidth="1.5" />
-                <polygon points={`${x - 58},68 ${x - 52},72 ${x - 58},76`} fill={C.grid} />
-              </>
-            )}
-            <rect x={x - 56} y="48" width="112" height="48" rx="5"
-              fill={isH ? "#111010" : C.bgDark}
-              stroke={isLast ? C.amber : isH ? C.border : C.grid}
-              strokeOpacity={isLast ? 0.55 : 1}
-              onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)}
-              style={{ cursor: "default" }}
-            />
-            <text x={x} y="70" fill={isLast ? C.amber : isH ? "#d4cfc8" : "#9c9790"} fontSize="11" fontFamily="monospace" textAnchor="middle" style={{ pointerEvents: "none" }}>{s.label}</text>
-            <text x={x} y="86" fill={isH ? C.text : C.textDim} fontSize="8.5" fontFamily="monospace" textAnchor="middle" style={{ pointerEvents: "none" }}>{s.sub}</text>
-          </g>
-        );
-      })}
+      {/* ── LEFT: INPUT ── */}
+      <rect x={lx} y={panelY} width={lw} height={panelH} rx="5" fill={C.bgDark} stroke={C.border} />
+      <text x={lx + lw / 2} y="52" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">INPUT</text>
+      <line x1={lx + 4} y1="59" x2={lx + lw - 4} y2="59" stroke={C.grid} strokeWidth="1" />
 
-      {/* terminal block */}
-      <rect x="80" y="114" width="660" height="152" rx="5" fill={C.bgDark} stroke={C.border} />
-      <circle cx="98" cy="127" r="4" fill={C.grid} />
-      <circle cx="114" cy="127" r="4" fill={C.grid} />
-      <circle cx="130" cy="127" r="4" fill={C.grid} />
+      <text x={lx + 12} y="78" fill={C.amber} fontSize="11" fontFamily="monospace">$ espresso run</text>
+      <text x={lx + 12} y="94" fill={C.amber} fontSize="11" fontFamily="monospace">  gdp_panel.csv</text>
+      <line x1={lx + 4} y1="104" x2={lx + lw - 4} y2="104" stroke={C.grid} strokeWidth="1" />
 
-      <text x="96" y="148" fill={C.textDim} fontSize="9" fontFamily="monospace">$ espresso run gdp_panel.csv</text>
-      <text x="96" y="164" fill={C.textDim} fontSize="8.5" fontFamily="monospace">↳  847 rows · 34 countries · 1998–2022 · 0 missing</text>
-      <text x="96" y="181" fill={C.amber} fontSize="9.5" fontFamily="monospace">◈  Panel OLS · TWFE selected</text>
-      <text x="96" y="200" fill="#d4cfc8" fontSize="13" fontFamily="monospace" fontWeight="500">β = +0.043     p &lt; 0.001     R² = 0.712</text>
-      <text x="96" y="218" fill={C.textDim} fontSize="8.5" fontFamily="monospace">Hausman p=0.08 ✓   Breusch–Pagan p=0.31 ✓   Durbin–Watson d=2.04 ✓</text>
-      <text x="96" y="235" fill={C.textDim} fontSize="8.5" fontFamily="monospace">→  results.html   ·   table.tex   ·   coef.json</text>
-      <rect x="294" y="226" width="6" height="11" fill={C.textDim} opacity="0.8" />
+      <text x={lx + 12} y="121" fill={C.text} fontSize="12" fontFamily="monospace">847 rows</text>
+      <text x={lx + 12} y="138" fill={C.text} fontSize="12" fontFamily="monospace">34 countries</text>
+      <text x={lx + 12} y="155" fill={C.text} fontSize="12" fontFamily="monospace">1998–2022</text>
+      <text x={lx + 12} y="172" fill={C.textDim} fontSize="11" fontFamily="monospace">0 missing values</text>
+      <line x1={lx + 4} y1="183" x2={lx + lw - 4} y2="183" stroke={C.grid} strokeWidth="1" />
 
-      {/* right panel: estimator list */}
-      <line x1="762" y1="114" x2="762" y2="266" stroke={C.border} strokeWidth="1" />
-      <text x="782" y="130" fill={C.textDim} fontSize="9" fontFamily="monospace" letterSpacing="1.5">MODELS</text>
-      {[
-        { n: "OLS / WLS / GLS",  w: 78 },
-        { n: "DiD · TWFE",       w: 62 },
-        { n: "Panel FE / RE",    w: 68 },
-        { n: "IV / 2SLS",        w: 48 },
-        { n: "ARIMA / SARIMA",   w: 58 },
-        { n: "Quantile Reg.",    w: 54 },
-        { n: "VAR · Granger",    w: 46 },
-      ].map((e, i) => (
-        <g key={e.n}>
-          <rect x="782" y={142 + i * 18} width={e.w} height="12" rx="2" fill={C.olive} opacity="0.18" />
-          <text x="782" y={152 + i * 18} fill={C.textDim} fontSize="8" fontFamily="monospace">{e.n}</text>
-        </g>
-      ))}
+      <text x={lx + 12} y="200" fill={C.olive} fontSize="12" fontFamily="monospace">panel structure ✓</text>
+      <text x={lx + 12} y="218" fill={C.olive} fontSize="12" fontFamily="monospace">balanced panel ✓</text>
+      <text x={lx + 12} y="236" fill={C.olive} fontSize="12" fontFamily="monospace">0 missing ✓</text>
 
-      {/* footer */}
-      <line x1="60" y1="280" x2="840" y2="280" stroke={C.grid} strokeWidth="1" />
-      <text x="450" y="296" fill={C.textDim} fontSize="8" fontFamily="monospace" textAnchor="middle">
-        15+ ESTIMATORS  ·  2,000+ REPORTS PROCESSED  ·  ~2 FTEs SAVED  ·  PYTHON · STATSMODELS · SCIPY · HOVER STAGES
+      {/* Arrow left → center */}
+      <line x1={lx + lw + 2} y1="150" x2={dx - 5} y2="150" stroke={C.border} strokeWidth="1.5" />
+      <polygon points={`${dx - 6},146 ${dx},150 ${dx - 6},154`} fill={C.border} />
+
+      {/* ── CENTER: DIAGNOSTICS ── */}
+      <rect x={dx} y={panelY} width={dw} height={panelH} rx="5" fill={C.bgDark} stroke={C.border} />
+      <text x={dx + dw / 2} y="52" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">DIAGNOSTICS</text>
+      <line x1={dx + 4} y1="59" x2={dx + dw - 4} y2="59" stroke={C.grid} strokeWidth="1" />
+
+      {/* Step 1: Pool OLS */}
+      <rect x={dx + 18} y="66" width={dw - 36} height="33" rx="4" fill="#111110" stroke={C.grid} />
+      <text x={dx + dw / 2} y="80" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle">Pool OLS → baseline</text>
+      <text x={dx + dw / 2} y="93" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">(initial estimate)</text>
+
+      <line x1={dx + dw / 2} y1="99" x2={dx + dw / 2} y2="110" stroke={C.grid} strokeWidth="1.5" />
+      <polygon points={`${dx + dw / 2 - 4},108 ${dx + dw / 2 + 4},108 ${dx + dw / 2},114`} fill={C.grid} />
+      <text x={dx + dw / 2 + 8} y="107" fill={C.textDim} fontSize="10" fontFamily="monospace">run Hausman test</text>
+
+      {/* Step 2: Hausman decision */}
+      <rect x={dx + 18} y="116" width={dw - 36} height="38" rx="4" fill="#111110" stroke={C.olive} strokeOpacity="0.45" />
+      <text x={dx + dw / 2} y="132" fill={C.olive} fontSize="12" fontFamily="monospace" textAnchor="middle">p = 0.08 → FE preferred</text>
+      <text x={dx + dw / 2} y="148" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">fixed effects over random</text>
+
+      <line x1={dx + dw / 2} y1="154" x2={dx + dw / 2} y2="165" stroke={C.grid} strokeWidth="1.5" />
+      <polygon points={`${dx + dw / 2 - 4},163 ${dx + dw / 2 + 4},163 ${dx + dw / 2},169`} fill={C.grid} />
+      <text x={dx + dw / 2 + 8} y="162" fill={C.textDim} fontSize="10" fontFamily="monospace">add time fixed effects</text>
+
+      {/* Step 3: TWFE selected */}
+      <rect x={dx + 18} y="171" width={dw - 36} height="38" rx="4" fill="#161410" stroke={C.amber} strokeOpacity="0.5" />
+      <text x={dx + dw / 2} y="188" fill={C.amber} fontSize="14" fontFamily="monospace" textAnchor="middle" fontWeight="500">TWFE SELECTED ✓</text>
+      <text x={dx + dw / 2} y="204" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">Two-Way Fixed Effects</text>
+
+      <line x1={dx + 4} y1="217" x2={dx + dw - 4} y2="217" stroke={C.grid} strokeWidth="1" />
+      <text x={dx + 16} y="234" fill={C.olive} fontSize="11" fontFamily="monospace">Breusch-Pagan  p=0.31 ✓</text>
+      <text x={dx + 16} y="251" fill={C.olive} fontSize="11" fontFamily="monospace">Durbin-Watson  d=2.04 ✓</text>
+
+      {/* Arrow center → right */}
+      <line x1={dx + dw + 2} y1="150" x2={rx - 5} y2="150" stroke={C.border} strokeWidth="1.5" />
+      <polygon points={`${rx - 6},146 ${rx},150 ${rx - 6},154`} fill={C.border} />
+
+      {/* ── RIGHT: OUTPUT ── */}
+      <rect x={rx} y={panelY} width={rw} height={panelH} rx="5" fill={C.bgDark} stroke={C.border} />
+      <text x={rx + rw / 2} y="52" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">OUTPUT</text>
+      <line x1={rx + 4} y1="59" x2={rx + rw - 4} y2="59" stroke={C.grid} strokeWidth="1" />
+
+      <text x={rx + rw / 2} y="94" fill={C.amber} fontSize="22" fontFamily="monospace" textAnchor="middle" fontWeight="500">TWFE</text>
+      <text x={rx + rw / 2} y="112" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle">Two-Way Fixed Effects</text>
+      <line x1={rx + 4} y1="122" x2={rx + rw - 4} y2="122" stroke={C.grid} strokeWidth="1" />
+
+      <text x={rx + 14} y="150" fill={C.text} fontSize="19" fontFamily="monospace" fontWeight="500">β = +0.043</text>
+      <text x={rx + 14} y="170" fill={C.text} fontSize="13" fontFamily="monospace">p &lt; 0.001  ***</text>
+      <text x={rx + 14} y="189" fill={C.text} fontSize="13" fontFamily="monospace">R² = 0.712</text>
+      <line x1={rx + 4} y1="202" x2={rx + rw - 4} y2="202" stroke={C.grid} strokeWidth="1" />
+
+      <text x={rx + 14} y="220" fill={C.textDim} fontSize="11" fontFamily="monospace">→ results.html</text>
+      <text x={rx + 14} y="236" fill={C.textDim} fontSize="11" fontFamily="monospace">→ table.tex</text>
+      <text x={rx + 14} y="252" fill={C.textDim} fontSize="11" fontFamily="monospace">→ coef.json</text>
+
+      <line x1="60" y1="276" x2="840" y2="276" stroke={C.grid} strokeWidth="1" />
+      <text x="450" y="293" fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">
+        15+ ESTIMATORS  ·  2,000+ REPORTS PROCESSED  ·  ~2 FTEs SAVED  ·  PYTHON · STATSMODELS · SCIPY
       </text>
     </svg>
   );
 }
 
 function AttritionVisual() {
-  const [hovEp, setHovEp] = useState<number | null>(null);
-
   const flowNodes = [
     { label: "Real Market Data",     sub: "VIX · T-bills · polling · X-date countdown" },
     { label: "LLM Agents",           sub: "Hawk (Republican)  ·  Dove (Democrat)" },
-    { label: "Game Loop",            sub: "HOLD  ·  SIGNAL FLEXIBILITY  ·  CONCEDE" },
-    { label: "80 Runs × 4 Episodes", sub: "2011 · 2013 · 2023 · 2025 (counterfactual)" },
+    { label: "Game Loop",            sub: "HOLD  ·  SIGNAL  ·  CONCEDE" },
+    { label: "80 Runs × 4 Episodes", sub: "2011 · 2013 · 2023 · 2025*" },
   ];
 
-  const scale = 310 / 142;
-  const eps = [
-    { y: "2011",  d: 78,  v: "48",  w: Math.round(78  * scale), col: C.olive, op: 0.55, out: "Budget Control Act" },
-    { y: "2013",  d: 21,  v: "22",  w: Math.round(21  * scale), col: C.olive, op: 0.35, out: "Continuing Resolution" },
-    { y: "2023",  d: 98,  v: "31",  w: Math.round(98  * scale), col: C.olive, op: 0.65, out: "Fiscal Responsibility Act" },
-    { y: "2025*", d: 142, v: "55+", w: 310,                      col: C.amber, op: 0.2,  out: "Default (simulated)" },
+  // Real data from simulation (n=80 runs across 4 episodes, up to 30 periods each)
+  // H3: median concession period by stress condition A→E (confirmed endpoints A=27, E=7; r=−0.72)
+  const conditions = [
+    { label: "A", median: 27 },
+    { label: "B", median: 22 },
+    { label: "C", median: 16 },
+    { label: "D", median: 11 },
+    { label: "E", median: 7  },
   ];
-  const fH = 52, fGap = 12, fStart = 42, fBoxW = 340, fX = 48, cx = 218;
-  const barX = 520, barH = 32, barGap = 18;
+
+  const fH = 52, fGap = 12, fStart = 42, fBoxW = 340, fX = 48, flowCx = 218;
+
+  // bar chart geometry
+  const chartB = 230, maxBarH = 168; // max bar for period=27
+  const scale = maxBarH / 27;
+  const barW = 54;
+  const barCx = [492, 564, 636, 708, 780]; // bar centers
 
   return (
     <svg viewBox="0 0 900 320" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <rect width="900" height="320" fill={C.bg} />
 
-      {/* left: process flow */}
-      <text x={cx} y="26" fill={C.textDim} fontSize="9.5" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">PROCESS</text>
-
+      {/* LEFT: process flow */}
+      <text x={flowCx} y="26" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">PROCESS</text>
       {flowNodes.map((n, i) => {
         const y = fStart + i * (fH + fGap);
         return (
           <g key={n.label}>
-            {i > 0 && (
-              <>
-                <line x1={cx} y1={fStart + (i - 1) * (fH + fGap) + fH} x2={cx} y2={y - 4} stroke={C.grid} strokeWidth="1.5" />
-                <polygon points={`${cx - 5},${y - 6} ${cx + 5},${y - 6} ${cx},${y}`} fill={C.grid} />
-              </>
-            )}
+            {i > 0 && (<>
+              <line x1={flowCx} y1={fStart + (i - 1) * (fH + fGap) + fH} x2={flowCx} y2={y - 4} stroke={C.grid} strokeWidth="1.5" />
+              <polygon points={`${flowCx - 5},${y - 6} ${flowCx + 5},${y - 6} ${flowCx},${y}`} fill={C.grid} />
+            </>)}
             <rect x={fX} y={y} width={fBoxW} height={fH} rx="4" fill={C.bgDark} stroke={C.grid} />
-            <text x={cx} y={y + 20} fill="#a09890" fontSize="11" fontFamily="monospace" textAnchor="middle">{n.label}</text>
-            <text x={cx} y={y + 38} fill={C.textDim} fontSize="8.5" fontFamily="monospace" textAnchor="middle">{n.sub}</text>
+            <text x={flowCx} y={y + 21} fill={C.text} fontSize="13" fontFamily="monospace" textAnchor="middle">{n.label}</text>
+            <text x={flowCx} y={y + 39} fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">{n.sub}</text>
           </g>
         );
       })}
 
-      {/* divider */}
-      <line x1="428" y1="28" x2="428" y2="280" stroke={C.border} strokeWidth="1" />
+      <line x1="428" y1="28" x2="428" y2="284" stroke={C.border} strokeWidth="1" />
 
-      {/* right: results */}
-      <text x="660" y="26" fill={C.textDim} fontSize="9.5" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">CONCESSION DELAY BY EPISODE</text>
+      {/* RIGHT: H3 bar chart — periods to deal by stress condition */}
+      <text x="636" y="26" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">PERIODS TO DEAL BY STRESS  (H3)</text>
+      <text x="636" y="42" fill={C.textDim} fontSize="9" fontFamily="monospace" textAnchor="middle">median concession period · r = −0.72 · n = 80</text>
 
-      <line x1={barX} y1="38" x2={barX} y2="268" stroke={C.grid} strokeWidth="1" />
+      {/* Y axis */}
+      <line x1="456" y1={chartB - maxBarH - 6} x2="456" y2={chartB} stroke={C.grid} strokeWidth="1" />
+      <line x1="456" y1={chartB} x2="820" y2={chartB} stroke={C.grid} strokeWidth="1" />
 
-      {eps.map((ep, i) => {
-        const y = 42 + i * (barH + barGap);
-        const isH = hovEp === i;
+      {[5, 10, 15, 20, 25].map(v => (
+        <g key={v}>
+          <line x1="453" y1={chartB - v * scale} x2="456" y2={chartB - v * scale} stroke={C.grid} strokeWidth="1" />
+          <text x="448" y={chartB - v * scale + 4} fill={C.textDim} fontSize="9" fontFamily="monospace" textAnchor="end">{v}</text>
+          <line x1="456" y1={chartB - v * scale} x2="820" y2={chartB - v * scale} stroke={C.grid} strokeWidth="0.5" strokeDasharray="4 4" />
+        </g>
+      ))}
+
+      {conditions.map((c, i) => {
+        const bH = c.median * scale;
+        const x = barCx[i] - barW / 2;
         return (
-          <g key={ep.y}>
-            <text x={barX - 8} y={y + 20} fill={isH ? C.text : C.textDim} fontSize="9" fontFamily="monospace" textAnchor="end">{ep.y}</text>
-            <rect x={barX} y={y} width={ep.w} height={barH} rx="2"
-              fill={ep.col} opacity={isH ? Math.min(ep.op * 1.9, 0.9) : ep.op}
-              onMouseEnter={() => setHovEp(i)} onMouseLeave={() => setHovEp(null)}
-              style={{ cursor: "default", transition: "opacity 0.2s" }}
+          <g key={c.label}>
+            <rect x={x} y={chartB - bH} width={barW} height={bH} rx="2"
+              fill={C.olive} opacity={0.28 + (4 - i) * 0.08}
             />
-            {ep.y === "2025*" && (
-              <line x1={barX + ep.w} y1={y + 16} x2={barX + ep.w + 18} y2={y + 16} stroke={C.amber} strokeWidth="1" strokeDasharray="3 2" opacity="0.35" />
-            )}
-            <text x={barX + ep.w + (ep.y === "2025*" ? 24 : 8)} y={y + 20} fill={isH ? C.text : C.textDim} fontSize="9" fontFamily="monospace">
-              {ep.d}d · VIX {ep.v}
-            </text>
-            {isH && <text x={barX} y={y - 3} fill={C.text} fontSize="8" fontFamily="monospace">{ep.out}</text>}
+            <text x={barCx[i]} y={chartB + 14} fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle">{c.label}</text>
+            <text x={barCx[i]} y={chartB - bH - 5} fill={C.text} fontSize="10" fontFamily="monospace" textAnchor="middle">{c.median}</text>
           </g>
         );
       })}
 
-      <line x1="60" y1="280" x2="840" y2="280" stroke={C.grid} strokeWidth="1" />
-      <text x="450" y="296" fill={C.textDim} fontSize="8" fontFamily="monospace" textAnchor="middle">
-        80 SIMULATION RUNS  ·  ALESINA–DRAZEN (1991)  ·  REAL VIX / T-BILL / POLLING DATA  ·  COX HAZARD + OLS
+      <text x="636" y={chartB - maxBarH - 14} fill={C.textDim} fontSize="9" fontFamily="monospace" textAnchor="middle">
+        ← low stress  ·  high stress →
+      </text>
+
+      {/* Key stats below chart */}
+      <line x1="456" y1="246" x2="820" y2="246" stroke={C.border} strokeWidth="1" />
+      <text x="456" y="261" fill={C.text} fontSize="11" fontFamily="monospace">Republican concedes first   92%   (74 / 80)</text>
+      <text x="456" y="277" fill={C.textDim} fontSize="10" fontFamily="monospace">H1: β = −59.6  p = 0.002  · Rep cost 6.6 &gt; Dem 6.2</text>
+
+      <line x1="60" y1="290" x2="840" y2="290" stroke={C.grid} strokeWidth="1" />
+      <text x="450" y="305" fill={C.textDim} fontSize="9" fontFamily="monospace" textAnchor="middle">
+        80 RUNS · 4 EPISODES · 5 STRESS LEVELS · 30 PERIODS · 3,230 LOGGED DECISIONS
       </text>
     </svg>
   );
@@ -231,8 +258,7 @@ export function ProjectCard({ project }: { project: Project }) {
           )}
         </div>
 
-        {/* full-width chart panel — height tracks aspect ratio 900:320 so meet has no letterbox */}
-        <div className="relative border-t border-line-soft bg-[#0d0c0b] overflow-hidden h-48 sm:h-56 md:h-72 lg:h-96 xl:h-[440px]">
+        <div className="relative border-t border-line-soft bg-[#0d0c0b] overflow-hidden w-full aspect-[900/320]">
           <Visual />
         </div>
       </article>
