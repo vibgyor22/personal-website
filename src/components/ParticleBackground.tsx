@@ -7,16 +7,17 @@ type Dot = {
   vx: number; vy: number
   r: number; a: number
   rgb: string
+  parallax: number
   waveAmp: number; waveFreq: number; wavePhase: number; waveAxis: 0 | 1
 }
 
 const COLORS = ['255,255,255', '232,228,220', '184,168,138', '138,154,130']
-const COUNT = 260
 const MOUSE_RADIUS = 150
 const FORCE = 0.28
 const MAX_SPEED = 1.3
 const DAMPEN = 0.97
 const CONNECT_DIST = 88
+const WAVE_FRAC = 0.18
 
 export function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -29,6 +30,9 @@ export function ParticleBackground() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const isMobile = window.innerWidth < 768
+    const COUNT = isMobile ? 110 : 260
+
     let W = 0, H = 0, mouseX = -9999, mouseY = -9999, raf = 0, frame = 0
 
     function resize() {
@@ -38,7 +42,6 @@ export function ParticleBackground() {
     resize()
     window.addEventListener('resize', resize)
 
-    const WAVE_FRAC = 0.18
     const dots: Dot[] = Array.from({ length: COUNT }, (_, i) => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
@@ -47,6 +50,7 @@ export function ParticleBackground() {
       r: Math.random() * 1.5 + 0.4,
       a: Math.random() * 0.18 + 0.12,
       rgb: COLORS[Math.floor(Math.random() * COLORS.length)],
+      parallax: Math.random() * 0.04 + 0.01,
       waveAmp: i < COUNT * WAVE_FRAC ? Math.random() * 28 + 8 : 0,
       waveFreq: Math.random() * 0.008 + 0.002,
       wavePhase: Math.random() * Math.PI * 2,
@@ -62,7 +66,9 @@ export function ParticleBackground() {
       ctx!.clearRect(0, 0, W, H)
       frame++
 
-      // connection lines — drawn before dots so dots sit on top
+      const scrollY = window.scrollY
+
+      // connection lines
       for (let i = 0; i < dots.length; i++) {
         for (let j = i + 1; j < dots.length; j++) {
           const dx = dots[i].x - dots[j].x
@@ -103,8 +109,12 @@ export function ParticleBackground() {
         d.y = (d.y + d.vy + H) % H
 
         const waveOffset = d.waveAmp * Math.sin(frame * d.waveFreq + d.wavePhase)
-        const drawX = d.waveAxis === 0 ? d.x + waveOffset * 0.25 : d.x
-        const drawY = d.waveAxis === 1 ? d.y + waveOffset * 0.25 : d.y
+        const baseX = d.waveAxis === 0 ? d.x + waveOffset * 0.25 : d.x
+        const baseY = d.waveAxis === 1 ? d.y + waveOffset * 0.25 : d.y
+
+        // parallax: dots shift down proportionally to scroll depth
+        const drawX = baseX
+        const drawY = ((baseY + scrollY * d.parallax) % H + H) % H
 
         ctx!.beginPath()
         ctx!.arc(drawX, drawY, d.r, 0, Math.PI * 2)
