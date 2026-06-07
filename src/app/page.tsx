@@ -56,7 +56,7 @@ export default function Home() {
                 <a href={`mailto:${profile.email}`} className="link-quiet">
                   email
                 </a>
-                <a href="/personal-website/resume.pdf" target="_blank" rel="noreferrer" className="link-quiet">
+                <a href="/resume.pdf" target="_blank" rel="noreferrer" className="link-quiet">
                   resume
                 </a>
               </div>

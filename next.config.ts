@@ -4,8 +4,7 @@ const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
   images: { unoptimized: true },
-  basePath: "/personal-website",   // repo name on GitHub
-  assetPrefix: "/personal-website/",
+  // basePath and assetPrefix are injected automatically by actions/configure-pages@v5
 };
 
 export default nextConfig;

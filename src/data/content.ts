@@ -145,7 +145,7 @@ export const research: ResearchItem[] = [
     title: "Democracy and Carbon Emissions in Nation-States",
     journal: "Undergraduate Research Paper",
     year: "2023",
-    link: "/personal-website/papers/democracy-carbon-emissions.pdf",
+    link: "/papers/democracy-carbon-emissions.pdf",
     intro:
       "I was curious whether democratic countries — with more public accountability and environmental activism — actually emit less carbon. I ran a cross-sectional regression across nation-states to test this.",
     story: [
