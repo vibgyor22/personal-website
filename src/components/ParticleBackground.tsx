@@ -18,7 +18,7 @@ const DAMPEN = 0.97
 const CONNECT_DIST = 88
 const WAVE_FRAC = 0.18
 const SCROLL_MULT_DESKTOP = 0.028
-const SCROLL_MULT_MOBILE = 0.003
+const SCROLL_MULT_MOBILE = 0.0003
 const SCROLL_DECAY = 0.94
 
 export function ParticleBackground() {
