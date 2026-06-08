@@ -52,7 +52,7 @@ export function ParticleBackground() {
       vx: (Math.random() - 0.5) * 0.2,
       vy: (Math.random() - 0.5) * 0.2,
       r: Math.random() * 1.5 + 0.4,
-      a: Math.random() * 0.3 + 0.25,
+      a: Math.random() * 0.25 + 0.5,
       rgb: COLORS[Math.floor(Math.random() * COLORS.length)],
       waveAmp: i < COUNT * WAVE_FRAC ? Math.random() * 28 + 8 : 0,
       waveFreq: Math.random() * 0.008 + 0.002,
