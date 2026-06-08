@@ -94,6 +94,7 @@ export const projects: Project[] = [
       "Republican concedes in 74/80 runs. Mean delay cost: Rep 6.6 vs Dem 6.2. H1 confirmed: β = −59.6, p = 0.002. H3: median concession drops from 27 periods (low stress) to 7 (crisis)",
     ],
     github: "https://github.com/vibgyor22/llm-war-of-attrition",
+    site: "https://llm-war-of-attrition.streamlit.app/",
     tags: ["Python", "Game Theory", "LLM Agents", "Streamlit"],
     theme: "attrition",
     stats: [
