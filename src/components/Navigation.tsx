@@ -52,7 +52,7 @@ export function Navigation() {
         </ul>
 
         <a
-          href="https://espressoprotocol.in"
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf`}
           target="_blank"
           rel="noreferrer"
           className="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-text-faint transition-colors hover:text-accent"
