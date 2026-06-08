@@ -56,7 +56,7 @@ export default function Home() {
                 <a href={`mailto:${profile.email}`} className="link-quiet">
                   email
                 </a>
-                <a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf`} target="_blank" rel="noreferrer" className="link-quiet">
+                <a href="https://espressoprotocol.in" target="_blank" rel="noreferrer" className="link-quiet">
                   resume
                 </a>
               </div>
