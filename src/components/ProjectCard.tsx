@@ -207,9 +207,58 @@ function AttritionVisual() {
   );
 }
 
+function MuniVisual() {
+  // Left: cumulative muni ETF response to a 1-sd IEF move (bp), days 0-7. Right: regression and backtest stats.
+  const mub = [12.58, 15.04, 16.04, 16.72, 17.41, 16.36, 16.57, 15.89];
+  const vteb = [12.83, 16.03, 17.92, 17.75, 19.1, 19.41, 19.76, 19.92];
+  const x0 = 80, x1 = 470, yb = 250, yt = 60, lo = 10, hi = 21;
+  const X = (i: number) => x0 + (i * (x1 - x0)) / 7;
+  const Y = (v: number) => yb - ((v - lo) / (hi - lo)) * (yb - yt);
+  const path = (a: number[]) => a.map((v, i) => `${i ? "L" : "M"}${X(i)},${Y(v)}`).join(" ");
+  return (
+    <svg viewBox="0 0 900 320" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <rect width="900" height="320" fill={C.bg} />
+      <text x="275" y="26" fill={C.textDim} fontSize="11" fontFamily="monospace" textAnchor="middle" letterSpacing="1.5">MUNI ETF RESPONSE TO A 1-SD TREASURY MOVE (BP)</text>
+      <rect x={X(1)} y={yt - 8} width={X(4) - X(1)} height={yb - yt + 8} fill="#14130f" />
+      <text x={(X(1) + X(4)) / 2} y={yb - 8} fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">catch-up window</text>
+      {[10, 15, 20].map((v) => (
+        <g key={v}>
+          <line x1={x0} y1={Y(v)} x2={x1} y2={Y(v)} stroke={C.grid} strokeWidth="0.8" strokeDasharray={v === 10 ? "" : "3 4"} />
+          <text x={x0 - 8} y={Y(v) + 4} fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="end">{v}</text>
+        </g>
+      ))}
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <text key={i} x={X(i)} y={yb + 18} fill={C.textDim} fontSize="10" fontFamily="monospace" textAnchor="middle">{i === 0 ? "t" : `+${i}`}</text>
+      ))}
+      <path d={path(vteb)} fill="none" stroke={C.olive} strokeWidth="1.8" />
+      <path d={path(mub)} fill="none" stroke={C.amber} strokeWidth="2.4" />
+      <text x={x1 + 8} y={Y(19.92) + 4} fill={C.olive} fontSize="11" fontFamily="monospace">VTEB</text>
+      <text x={x1 + 8} y={Y(15.89) + 4} fill={C.amber} fontSize="11" fontFamily="monospace">MUB</text>
+
+      <line x1="540" y1="28" x2="540" y2="284" stroke={C.border} strokeWidth="1" />
+      <text x="565" y="54" fill={C.textDim} fontSize="10" fontFamily="monospace" letterSpacing="1.5">LEAD-LAG REGRESSION (NEWEY-WEST)</text>
+      <text x="565" y="76" fill={C.text} fontSize="12" fontFamily="monospace">same-day beta     0.30   t = 17.3</text>
+      <text x="565" y="94" fill={C.text} fontSize="12" fontFamily="monospace">lags 1-5 sum      0.15   p = 0.001</text>
+      <text x="565" y="112" fill={C.textDim} fontSize="11" fontFamily="monospace">priced on day one  ~68% (MUB)</text>
+      <line x1="565" y1="126" x2="850" y2="126" stroke={C.grid} strokeWidth="1" />
+      <text x="565" y="146" fill={C.textDim} fontSize="10" fontFamily="monospace" letterSpacing="1.5">BACKTEST, NET, NEXT-OPEN ENTRY</text>
+      <text x="565" y="170" fill={C.amber} fontSize="20" fontFamily="monospace" fontWeight="500">Sharpe 1.93</text>
+      <text x="565" y="188" fill={C.textDim} fontSize="11" fontFamily="monospace">out of sample, 2018-26</text>
+      <text x="565" y="212" fill={C.text} fontSize="12" fontFamily="monospace">OOS R² (daily)    2.0-3.7%</text>
+      <text x="565" y="230" fill={C.text} fontSize="12" fontFamily="monospace">placebo Sharpe    0.0</text>
+      <text x="565" y="248" fill={C.text} fontSize="12" fontFamily="monospace">positive years    19 / 19</text>
+      <line x1="60" y1="290" x2="840" y2="290" stroke={C.grid} strokeWidth="1" />
+      <text x="450" y="305" fill={C.textDim} fontSize="9" fontFamily="monospace" textAnchor="middle">
+        MUB · VTEB · HEDGED WITH IEF · 2008-2026 · FREE PUBLIC DATA · PYTHON · STATSMODELS
+      </text>
+    </svg>
+  );
+}
+
 const visuals: Record<string, () => React.JSX.Element> = {
   espresso: EspressoVisual,
   attrition: AttritionVisual,
+  muni: MuniVisual,
 };
 
 export function ProjectCard({ project }: { project: Project }) {

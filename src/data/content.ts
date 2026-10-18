@@ -8,11 +8,11 @@ export const profile = {
 export const intro = {
   greeting: "Hi, I'm Vibhor.",
   current:
-    "I'm currently a Financial Research Analyst at D. E. Shaw in Hyderabad, building LLM tools and data pipelines for traders and portfolio managers.",
+    "I'm an MPhil student in Economics and Data Science at the University of Cambridge. Before that, I was a Financial Research Analyst at D. E. Shaw in Hyderabad, building LLM tools and data pipelines for traders and portfolio managers.",
   background:
     "My background is economics (Delhi University) and data science (IIT Madras). I've interned at EY, Emirates NBD, and the Institute of Economic Growth.",
   cambridge:
-    "In October 2026, I'm starting an MPhil in Economics and Data Science at Cambridge.",
+    "At Cambridge, I'm working on machine learning in economics, causal inference and empirical finance, alongside systematic macro research of my own.",
   future:
     "After that, I want to keep working where economics meets machine learning — on questions about institutions and macro that I find genuinely interesting.",
 };
@@ -22,7 +22,7 @@ export const work = {
   company: "D. E. Shaw",
   role: "Financial Research Analyst — Data Analytics",
   location: "Hyderabad, India",
-  period: "June 2024 — Present",
+  period: "June 2024 — 2026",
   promoted: "Promoted from Associate in 18 months",
   narrative:
     "I provide analytics support to traders, portfolio managers, and senior researchers across quantitative research, LLM tooling, and investment decision workflows.",
@@ -55,11 +55,33 @@ export type Project = {
   site?: string | null;
   paper?: string | null;
   tags: string[];
-  theme: "espresso" | "attrition" | "democracy";
+  theme: "espresso" | "attrition" | "democracy" | "muni";
   stats?: { label: string; value: string }[];
 };
 
 export const projects: Project[] = [
+  {
+    slug: "muni-stale-price-macro",
+    title: "Muni Stale-Price Macro",
+    summary:
+      "Muni bond ETFs price in about 70% of a Treasury move the same day and the rest over the next two to four days. A Treasury-hedged strategy that trades this lag earned a 1.9 Sharpe ratio out of sample (2018-26), net of costs.",
+    bullets: [
+      "Mechanism: munis rarely trade, so ETF quotes anchor to vendor evaluated prices that update slowly; the holder base is tax-driven and slow to rebalance",
+      "Distributed-lag regressions confirm the lag: lagged IEF betas are jointly significant (p = 0.001 for MUB, p = 0.0003 for VTEB, Newey-West)",
+      "Signal: recent Treasury and equity moves, 60-day flow momentum and a start-of-month reinvestment tilt; long MUB/VTEB against beta-weighted IEF, entered at the next open",
+      "Specification chosen on 2008-17 only; out-of-sample R² of 2-4% on daily hedged returns; placebo with lagged Treasury moves earns 0.0; positive in all 19 calendar years",
+    ],
+    github: "https://github.com/vibgyor22/muni-stale-price-macro",
+    site: "https://vibgyor22.github.io/muni-stale-price-macro/",
+    tags: ["Python", "Fixed Income", "Systematic Macro", "Econometrics"],
+    theme: "muni",
+    stats: [
+      { label: "OOS Sharpe 2018-26", value: "1.93" },
+      { label: "Bootstrap 95% CI", value: "1.4-2.4" },
+      { label: "Max drawdown", value: "−10% at 10% vol" },
+      { label: "Positive years", value: "19 / 19" },
+    ],
+  },
   {
     slug: "espresso-protocol",
     title: "Espresso Protocol",
@@ -193,7 +215,7 @@ export const education = [
     degree: "MPhil in Economics and Data Science",
     location: "Cambridge, United Kingdom",
     period: "Oct 2026 — Jun 2027",
-    note: "Incoming · Class of '27",
+    note: "Current · Class of '27",
     narrative:
       "Cambridge has been a genuine fit for how I want to grow as an economist. The program brings together machine learning and econometrics in a way that goes beyond black-box predictions — I'll dig into causal inference, understand when and why models work, and build the rigor needed to answer real economic questions. I'm drawn to the research culture and the chance to work alongside economists thinking seriously about methodology.",
     whatStudy:
